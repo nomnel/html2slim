@@ -27,7 +27,15 @@ module HTML2Slim
       # when
       erb.gsub!(/<%-?\s*(when .+?)\s*-?%>/){ %(</ruby><ruby code="#{$1}">) }
       erb.gsub!(/<%\s*(end|}|end\s+-)\s*%>/, %(</ruby>))
-      erb.gsub!(/<%(.+?)\s*%>/){ %(<ruby code="#{$1.gsub(/"/, '&quot;')}"></ruby>) }
+      # html comment
+      erb.gsub!(/<!--\s*(.+?)\s*-->/){ %(<comment code="#{$1.gsub(/"/, '&quot;')}"></comment>) }
+      # class="feature_<%= category.id %>"
+      erb.gsub!(/class="(.*?)<%=\s*(.+?)\s*-?%>(.*?)"/){ "klass=\"#{x=$3;$1}\#{#{$2.gsub(/"/, '&quot;')}}#{x}\"" }
+      # "foo/#{ruby_code}/bar"
+      erb.gsub!(/"(.*?)<%=\s*(.+?)\s*-?%>(.*?)"/){ "\"#{x=$3;$1}\#{#{$2.gsub(/"/, '&quot;')}}#{x}\"" }
+      # <%# comment %>
+      erb.gsub!(/<%-?\s*#(.+?)\s*-?%>/){ %(<comment code="#{$1.gsub(/"/, '&quot;')}"></comment>) }
+      erb.gsub!(/<%-?(.+?)\s*-?%>/){ %(<ruby code="#{$1.gsub(/"/, '&quot;')}"></ruby>) }
       @slim ||= Hpricot(erb).to_slim
     end
   end
