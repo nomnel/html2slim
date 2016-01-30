@@ -20,7 +20,11 @@ class Hpricot::BogusETag
 end
 
 class Hpricot::Text
-  include SlimText
+  def to_slim(lvl=0)
+    str = content.to_s
+    return nil if str.strip.empty?
+    ('  ' * lvl) + %(| #{str.gsub(/\s+/, ' ')})
+  end
 end
 
 class Hpricot::Comment
@@ -44,10 +48,12 @@ class Hpricot::DocType
 end
 
 class Hpricot::Elem
+  BLANK_RE = /\A[[:space:]]*\z/
+
   def slim(lvl=0)
     r = '  ' * lvl
 
-    return r + slim_ruby_code if ruby?
+    return r + slim_ruby_code(r) if ruby?
     return r + slim_comment if comment?
 
     r += name unless skip_tag_name?
@@ -67,8 +73,8 @@ class Hpricot::Elem
 
   private
 
-  def slim_ruby_code
-    (code.strip[0] == "=" ? "" : "- ") + code.strip
+  def slim_ruby_code(r)
+    (code.strip[0] == "=" ? "" : "- ") + code.strip.gsub(/\n/, "\n#{r}- ")
   end
 
   def slim_comment
@@ -106,11 +112,11 @@ class Hpricot::Elem
   end
 
   def has_id?
-    has_attribute?('id')
+    has_attribute?('id') && !(BLANK_RE === self['id'])
   end
 
   def has_class?
-    has_attribute?('class')
+    has_attribute?('class') && !(BLANK_RE === self['class'])
   end
 
   def ruby?

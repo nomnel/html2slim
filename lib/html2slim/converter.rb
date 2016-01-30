@@ -18,14 +18,14 @@ module HTML2Slim
 
       erb.gsub!(/<%(.+?)\s*\{\s*(\|.+?\|)?\s*%>/){ %(<%#{$1} do #{$2}%>) }
 
-      # while, case, if, for and blocks...
-      erb.gsub!(/<%(-\s+)?(\s*while .+?|\s*case .+?|\s*if .+?|\s*for .+?|.+?do\s*(\|.+?\|)?\s*)-?%>/){ %(<ruby code="#{$2.gsub(/"/, '&quot;')}">) }
+      # case, if, for, unless, until, while, and blocks...
+      erb.gsub!(/<%(-\s+)?((\s*(case|if|for|unless|until|while) .+?)|.+?do\s*(\|.+?\|)?\s*)-?%>/){ %(<ruby code="#{$2.gsub(/"/, '&quot;')}">) }
       # else
       erb.gsub!(/<%-?\s*else\s*-?%>/, %(</ruby><ruby code="else">))
       # elsif
-      erb.gsub!(/<%-?\s*(elsif .+?)\s*-?%>/){ %(</ruby><ruby code="#{$1}">) }
+      erb.gsub!(/<%-?\s*(elsif .+?)\s*-?%>/){ %(</ruby><ruby code="#{$1.gsub(/"/, '&quot;')}">) }
       # when
-      erb.gsub!(/<%-?\s*(when .+?)\s*-?%>/){ %(</ruby><ruby code="#{$1}">) }
+      erb.gsub!(/<%-?\s*(when .+?)\s*-?%>/){ %(</ruby><ruby code="#{$1.gsub(/"/, '&quot;')}">) }
       erb.gsub!(/<%\s*(end|}|end\s+-)\s*%>/, %(</ruby>))
       # html comment
       erb.gsub!(/<!--\s*(.+?)\s*-->/){ %(<comment code="#{$1.gsub(/"/, '&quot;')}"></comment>) }
@@ -35,7 +35,8 @@ module HTML2Slim
       erb.gsub!(/"(.*?)<%=\s*(.+?)\s*-?%>(.*?)"/){ "\"#{x=$3;$1}\#{#{$2.gsub(/"/, '&quot;')}}#{x}\"" }
       # <%# comment %>
       erb.gsub!(/<%-?\s*#(.+?)\s*-?%>/){ %(<comment code="#{$1.gsub(/"/, '&quot;')}"></comment>) }
-      erb.gsub!(/<%-?(.+?)\s*-?%>/){ %(<ruby code="#{$1.gsub(/"/, '&quot;')}"></ruby>) }
+
+      erb.gsub!(/<%-?(.+?)\s*-?%>/m){ %(<ruby code="#{$1.gsub(/"/, '&quot;')}"></ruby>) }
       @slim ||= Hpricot(erb).to_slim
     end
   end
