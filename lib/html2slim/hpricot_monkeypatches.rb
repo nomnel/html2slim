@@ -74,7 +74,13 @@ class Hpricot::Elem
   private
 
   def slim_ruby_code(r)
-    (code.strip[0] == "=" ? "" : "- ") + code.strip.gsub(/\n/, "\n#{r}- ")
+    c = code.strip
+    if c[0] != '='
+      c.insert(0, '- ')
+    elsif c[1] != ' '
+      c.insert(1, ' ')
+    end
+    c.gsub(/\n/, "\n#{r}- ")
   end
 
   def slim_comment
