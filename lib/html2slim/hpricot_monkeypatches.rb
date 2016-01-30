@@ -110,7 +110,7 @@ class Hpricot::Elem
       set_attribute('class', get_attribute('klass'))
       remove_attribute('klass')
     end
-    has_attributes?? "[#{attributes_as_html.to_s.strip}]" : ""
+    has_attributes?? " #{attributes_as_html.to_s.strip}" : ""
   end
 
   def has_attributes?
