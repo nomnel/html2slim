@@ -26,7 +26,7 @@ module HTML2Slim
       erb.gsub!(/<%-?\s*(elsif .+?)\s*-?%>/){ %(</ruby><ruby code="#{$1.gsub(/"/, '&quot;')}">) }
       # when
       erb.gsub!(/<%-?\s*(when .+?)\s*-?%>/){ %(</ruby><ruby code="#{$1.gsub(/"/, '&quot;')}">) }
-      erb.gsub!(/<%\s*(end|}|end\s+-)\s*%>/, %(</ruby>))
+      erb.gsub!(/<%-?\s*(end|}|end\s+-)\s*%>/, %(</ruby>))
       # html comment
       erb.gsub!(/<!--\s*(.+?)\s*-->/){ %(<comment code="#{$1.gsub(/"/, '&quot;')}"></comment>) }
       # class="feature_<%= category.id %>"
